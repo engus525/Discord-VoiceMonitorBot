@@ -3,7 +3,8 @@ from datetime import datetime, timedelta
 import pytz
 import asyncio
 import os
-from aiohttp import aiohttp, web
+import aiohttp
+from aiohttp import web
 
 async def ping_self():
   await client.wait_until_ready()
