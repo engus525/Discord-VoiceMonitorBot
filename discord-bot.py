@@ -110,7 +110,7 @@ async def report_every_day():
 
     embed = discord.Embed(
         title="🕛 오늘의 공부 누적 시간",
-        description=f"🗓 {datetime.now(KST).strftime('%Y년 %m월 %d일')} 기준",
+        description=f"🗓 {(datetime.now(KST) - timedelta(days=1)).strftime('%Y년 %m월 %d일')} 기준",
         color=discord.Color.gold()
     )
 
