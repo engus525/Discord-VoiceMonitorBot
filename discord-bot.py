@@ -3,7 +3,17 @@ from datetime import datetime, timedelta
 import pytz
 import asyncio
 import os
-from aiohttp import web
+from aiohttp import aiohttp, web
+
+async def ping_self():
+  await client.wait_until_ready()
+  while not client.is_closed():
+    try:
+      async with aiohttp.ClientSession() as s:
+        await s.get(os.environ['KOYEP_URL'])
+    except:
+      pass
+    await asyncio.sleep(180)
 
 async def health_check(request):
   return web.Response(text="OK", status=200)
@@ -31,8 +41,7 @@ async def on_ready():
   await client.change_presence(status=discord.Status.online, activity=discord.Game("지켜보고 있다.👀"))
   client.loop.create_task(report_every_day())
   client.loop.create_task(start_web_server())
-
-
+  client.loop.create_task(ping_self())
 
 @client.event
 async def on_voice_state_update(member, before, after):
