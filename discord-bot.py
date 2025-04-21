@@ -39,7 +39,7 @@ user_total_time = {}
 @client.event
 async def on_ready():
   print("Bot Started")
-  await client.change_presence(status=discord.Status.online, activity=discord.Game("지켜보고 있다.👀"))
+  await client.change_presence(status=discord.Status.online, activity=discord.Game("👀 바보들 구경"))
   client.loop.create_task(report_every_day())
   client.loop.create_task(start_web_server())
   client.loop.create_task(ping_self())
@@ -60,7 +60,8 @@ async def on_voice_state_update(member, before, after):
 
   # 입장
   if not before.channel and after.channel:
-    user_entry_time[member.id] = datetime.now(KST)
+    if member.id not in user_entry_time:
+      user_entry_time[member.id] = datetime.now(KST)
     embed = discord.Embed(
         title="✅ 입장",
         description=f"{name_bold} 님이 🎧 **{after.channel.name}** 에 입장하셨습니다!",
@@ -75,9 +76,12 @@ async def on_voice_state_update(member, before, after):
   # 퇴장
   elif before.channel and not after.channel:
     entry_time = user_entry_time.pop(member.id, None)
-    if entry_time:
-      duration = datetime.now(KST) - entry_time
-      user_total_time[member.id] = user_total_time.get(member.id, timedelta()) + duration
+    if entry_time is None:
+      now = datetime.now(KST)
+      entry_time = now.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    duration = datetime.now(KST) - entry_time
+    user_total_time[member.id] = user_total_time.get(member.id, timedelta()) + duration
 
     embed = discord.Embed(
         title="⛔ 퇴장",
@@ -92,7 +96,12 @@ async def on_voice_state_update(member, before, after):
 
   # 이동
   elif before.channel != after.channel:
+    entry_time = user_entry_time.get(member.id)
+    if entry_time:
+      duration = datetime.now(KST) - entry_time
+      user_total_time[member.id] = user_total_time.get(member.id, timedelta()) + duration
     user_entry_time[member.id] = datetime.now(KST)
+
     embed = discord.Embed(
         title="🔁 이동",
         description=f"{name_bold} 님이 🎧 **{before.channel.name}** → **{after.channel.name}** 로 이동하셨습니다!",
