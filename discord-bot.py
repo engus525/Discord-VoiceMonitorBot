@@ -14,7 +14,7 @@ async def ping_self():
         await s.get(os.environ['KOYEP_URL'])
     except:
       pass
-    await asyncio.sleep(180)
+    await asyncio.sleep(60)
 
 async def health_check(request):
   return web.Response(text="OK", status=200)
