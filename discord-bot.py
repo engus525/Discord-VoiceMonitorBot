@@ -39,7 +39,7 @@ user_total_time = {}
 @client.event
 async def on_ready():
   print("Bot Started")
-  await client.change_presence(status=discord.Status.online, activity=discord.Game("👀 바보들 구경"))
+  await client.change_presence(status=discord.Status.online, activity=discord.Game("💯 공부하는 당신. 성공"))
   client.loop.create_task(report_every_day())
   client.loop.create_task(start_web_server())
   client.loop.create_task(check_empty_voice_channel())
@@ -78,8 +78,7 @@ async def on_voice_state_update(member, before, after):
   elif before.channel and not after.channel:
     entry_time = user_entry_time.pop(member.id, None)
     if entry_time is None:
-      now = datetime.now(KST)
-      entry_time = now.replace(hour=0, minute=0, second=0, microsecond=0)
+      now = now_dt.strftime(f"%Y년 %m월 %d일 {hour_12} %I시 %M분 %S초")
 
     duration = datetime.now(KST) - entry_time
     user_total_time[member.id] = user_total_time.get(member.id, timedelta()) + duration
