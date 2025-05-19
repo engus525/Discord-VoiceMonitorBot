@@ -184,13 +184,13 @@ async def check_empty_voice_channel():
 
       if total_members == 0:
         embed = discord.Embed(
-            title="📢📢📢 아무도 공부를 안 해?? 외않헤????? 🫨🫨ㅏ🫨🫨🫨ㅏㅏ🫨ㅏ 📢📢📢",
+            title="📢 아무도 공부를 안 해?? 외않헤????? 🫨🫨🫨🫨🫨🫨 📢",
             description=(
-              "💣💣💣 이건 거의 재난입니다 💣💣💣\n"
+              "🤯🤯 이건 거의 재난입니다 🤯🤯\n"
               "⚠️ **모든 음성 채널이 텅터어텉ㅇ어텉어텅 비었어요!** ⚠️\n\n"
               "🚓 **발작 협회 출동합니다** 🚓\n"
               "📛 **지금 당장 공부하세요** 📛\n\n"
-              "🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥\n"
+              "🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥\n\n"
             ),
             color=discord.Color.red()
         )
