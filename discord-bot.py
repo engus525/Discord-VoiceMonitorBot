@@ -42,6 +42,7 @@ async def on_ready():
   await client.change_presence(status=discord.Status.online, activity=discord.Game("👀 바보들 구경"))
   client.loop.create_task(report_every_day())
   client.loop.create_task(start_web_server())
+  client.loop.create_task(check_empty_voice_channel())
   client.loop.create_task(ping_self())
 
 @client.event
@@ -161,6 +162,44 @@ async def report_every_day():
     await ch.send(embed=embed)
     user_total_time.clear()
     user_entry_time.clear()
+
+
+# 모든 음성 채널이 비어 있으면 알림 (단, 00~09시 제외)
+async def check_empty_voice_channel():
+  await client.wait_until_ready()
+  ch = client.get_channel(1359358645137182959)  # 메시지를 보낼 텍스트 채널
+
+  if ch is None:
+    print("❌ 텍스트 채널을 찾을 수 없습니다.")
+    return
+
+  while not client.is_closed():
+    now = datetime.now(KST)
+    if now.hour < 9:
+      print(f"[스킵] 현재 시각: {now.hour}시 - 메시지 전송 안 함")
+    else:
+      guild = ch.guild
+      voice_channels = [vc for vc in guild.voice_channels]
+      total_members = sum(len(vc.members) for vc in voice_channels)
+
+      if total_members == 0:
+        embed = discord.Embed(
+            title="📢📢📢 아무도 공부를 안 해?? 외않헤????? 🫨🫨ㅏ🫨🫨🫨ㅏㅏ🫨ㅏ 📢📢📢",
+            description=(
+              "💣💣💣 이건 거의 재난입니다 💣💣💣\n"
+              "⚠️ **모든 음성 채널이 텅터어텉ㅇ어텉어텅 비었어요!** ⚠️\n\n"
+              "🚓 **발작 협회 출동합니다** 🚓\n"
+              "📛 **지금 당장 공부하세요** 📛\n\n"
+              "🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥\n"
+            ),
+            color=discord.Color.red()
+        )
+        embed.set_footer(text="이 메시지는 90분 주기로 게으름발작협회에서 후원합니다. 새벽에는 봐드려요.")
+        await ch.send(embed=embed)
+      else:
+        print(f"[활동 감지] 현재 음성 채널 참여 인원 수: {total_members}")
+
+    await asyncio.sleep(1.5 * 60 * 60) # 90분마다
 
 
 client.run(os.environ['TOKEN'])
